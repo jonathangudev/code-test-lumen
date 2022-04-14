@@ -32,7 +32,7 @@
     </body>
 
 <script>
-fetch('{{URL::to("/")}}/members', {
+fetch('/members', {
         method: 'get'
     })
     .then(response => response.json())
