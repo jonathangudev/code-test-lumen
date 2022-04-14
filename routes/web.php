@@ -1,61 +1,35 @@
-<!doctype html>
-<html lang="{{ app()->getLocale() }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<?php
 
-        <title>Members</title>
+/** @var \Laravel\Lumen\Routing\Router $router */
 
-        <!-- Styles -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">        @yield('css-links')
-    </head>
+/*
+|--------------------------------------------------------------------------
+| Application Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register all of the routes for an application.
+| It is a breeze. Simply tell Lumen the URIs it should respond to
+| and give it the Closure to call when that URI is requested.
+|
+*/
 
-    <body>
-      <!-- Begin page content -->
-      <main role="main" class="container">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Phone</th>
-              <th scope="col">Subscription Level</th>
-              <th scope="col">Subscription Price</th>
-            </tr>
-          </thead>
-          <tbody id="memberData">
-          </tbody>
-        </table>
-        <div id="subscriptionAverage">Subscription Average: </div>
-      </main>
-    </body>
+$router->get('/members', function () use ($router) {
+    $members = App\Models\Member::all();
 
-<script>
-fetch('{{URL::to("/")}}/members', {
-        method: 'get'
-    })
-    .then(response => response.json())
-    .then(jsonData => {
-      data = jsonData.data;
-      mainContainer = document.getElementById("memberData");
+    foreach ($members as $member) {
+        $member->subscription_name =$member->subscription->name;
+        $member->subscription_price = $member->subscription->price;
+        unset($member->subscription);
+    }
 
-      data.sort((a,b) => (a.subscription_price < b.subscription_price ? 1 : -1));
+    return response()->json(['error' => false, 'data' => $members]);
+});
 
-      for (var i = 0; i < data.length; i++) {
-        tablerow = document.createElement("tr");
-        tablerow.innerHTML = `<td> ${data[i].name} </td><td> ${data[i].email} </td><td> ${data[i].phone} </td><td>${data[i].subscription_name}</td><td>${data[i].subscription_price}</td>`;
-        mainContainer.appendChild(tablerow);
-      }
+$router->get('/subscriptions', function () use ($router) {
+    $subscriptions = App\Models\Subscription::all();
+    return response()->json(['error' => false, 'data' => $subscriptions]);
+});
 
-      subscriptionAverageReport = document.getElementById("subscriptionAverage");
-
-      let totalSubscriptionPriceAverage = data.reduce((previousValue, currentValue) => previousValue + parseInt(currentValue.subscription_price), 0) / data.length;
-
-      subscriptionAverageReport.innerHTML += totalSubscriptionPriceAverage;
-
-    })
-    .catch(err => console.error('Error:', error));
-</script>
-
-</html>
+$router->get('/display-members', function () use ($router) {
+    return view('display-members');
+});
