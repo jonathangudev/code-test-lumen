@@ -19,7 +19,7 @@ class MembersTest extends TestCase
               'error',
               'data' => [
                   '*' => [
-                    'name', 'email', 'phone', 'subscription'
+                    'name', 'email', 'phone', 'subscription_name', 'subscription_price'
                   ]
               ]
         ]);
