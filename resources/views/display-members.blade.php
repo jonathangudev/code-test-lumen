@@ -37,23 +37,21 @@ fetch('/members', {
     })
     .then(response => response.json())
     .then(jsonData => {
-      data = jsonData.data;
-      mainContainer = document.getElementById("memberData");
+      let data = jsonData.data;
+      let mainContainer = document.getElementById("memberData");
 
       data.sort((a,b) => (a.subscription_price < b.subscription_price ? 1 : -1));
 
       for (var i = 0; i < data.length; i++) {
-        tablerow = document.createElement("tr");
+        let tablerow = document.createElement("tr");
         tablerow.innerHTML = `<td> ${data[i].name} </td><td> ${data[i].email} </td><td> ${data[i].phone} </td><td>${data[i].subscription_name}</td><td>${data[i].subscription_price}</td>`;
         mainContainer.appendChild(tablerow);
       }
 
-      subscriptionAverageReport = document.getElementById("subscriptionAverage");
-
+      let subscriptionAverageReport = document.getElementById("subscriptionAverage");
       let totalSubscriptionPriceAverage = data.reduce((previousValue, currentValue) => previousValue + parseInt(currentValue.subscription_price), 0) / data.length;
 
       subscriptionAverageReport.innerHTML += totalSubscriptionPriceAverage;
-
     })
     .catch(err => console.error('Error:', error));
 </script>
